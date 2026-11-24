@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{{ m.Title if m else "영화 정보" }} - 무비서치{% endblock %}
+{% block content %}
+<a class="back" href="javascript:history.back()">검색 결과로 돌아가기</a>
+{% if error %}
+  <p class="notice">{{ error }}</p>
+{% else %}
+<article class="detail">
+  {% if m.Poster != "N/A" %}
+    <img src="{{ m.Poster }}" alt="{{ m.Title }} 포스터">
+  {% else %}
+    <div class="noposter">포스터 없음</div>
+  {% endif %}
+  <div class="info">
+    <h1>{{ m.Title }}</h1>
+    <p class="meta">{{ m.Year }}, {{ m.Runtime }}, {{ m.Genre }}</p>
+    <p class="plot">{{ m.Plot if m.Plot != "N/A" else "줄거리 정보가 없어요." }}</p>
+    <dl>
+      <dt>감독</dt><dd>{{ m.Director }}</dd>
+      <dt>출연</dt><dd>{{ m.Actors }}</dd>
+      <dt>국가</dt><dd>{{ m.Country }}</dd>
+    </dl>
+    {% if m.Ratings %}
+    <ul class="ratings">
+      {% for r in m.Ratings %}
+      <li><strong>{{ r.Value }}</strong>{{ r.Source }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+</article>
+{% endif %}
+{% endblock %}

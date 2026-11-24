@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>어떤 영화를<br>찾으세요?</h1>
+  <form class="search" action="{{ url_for('index') }}" method="get">
+    <input type="search" name="q" value="{{ q }}" placeholder="영어 제목으로 검색 (예: Parasite)" aria-label="영화 제목" required autofocus>
+    <button type="submit">검색</button>
+  </form>
+  {% if not q %}
+  <p class="chips">
+    {% for s in ["Inception", "Parasite", "Spirited Away", "Interstellar", "La La Land"] %}
+    <a href="{{ url_for('index', q=s) }}">{{ s }}</a>
+    {% endfor %}
+  </p>
+  {% endif %}
+</section>
+
+{% if error %}
+  <p class="notice">{{ error }}</p>
+{% elif q %}
+  <p class="count">"{{ q }}" 검색 결과 {{ total }}개</p>
+  <div class="grid">
+    {% for m in movies %}
+    <a class="card" href="{{ url_for('movie', imdb_id=m.imdbID) }}">
+      {% if m.Poster != "N/A" %}
+        <img src="{{ m.Poster }}" alt="{{ m.Title }} 포스터" loading="lazy"
+     onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'noposter',textContent:'포스터 없음'}))">
+      {% else %}
+        <div class="noposter">포스터 없음</div>
+      {% endif %}
+      <h2>{{ m.Title }}</h2>
+      <span>{{ m.Year }}</span>
+    </a>
+    {% endfor %}
+  </div>
+  {% if pages > 1 %}
+  <nav class="pager">
+    {% if page > 1 %}<a href="{{ url_for('index', q=q, page=page-1) }}">이전</a>{% endif %}
+    <span>{{ page }} / {{ pages }}</span>
+    {% if page < pages %}<a href="{{ url_for('index', q=q, page=page+1) }}">다음</a>{% endif %}
+  </nav>
+  {% endif %}
+{% endif %}
+{% endblock %}
